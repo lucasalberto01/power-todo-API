@@ -6,33 +6,30 @@ from .serializers import TaskSerializer
 from .models import Task
 
 
-class TaskTodo(APIView):
-    """Routes for the API without id"""
-    permission_classes = [IsAuthenticated]
-    serializer_class = TaskSerializer
-
-    def get(self, request):
-        id = request.user.id
-        tasks = Task.objects.filter(
-            by_list__user_id=id
-        )
-        serializer = TaskSerializer(tasks, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = TaskSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-        return Response(serializer.data)
-
-
 class TaskTodoById(APIView):
     """Routes for the API with id"""
     permission_classes = [IsAuthenticated]
+    serializer_class = TaskSerializer
+
+    def post(self, request, pk):
+        data = {
+            'title': request.data['title'],
+            'completed': request.data['completed'] if 'completed' in request.data else False,
+            'by_list': pk
+        }
+        print(data)
+        serializer = TaskSerializer(data=data)
+        if serializer.is_valid():
+            print("SAVED TASK")
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            print("ERROR")
+            return Response(serializer.errors, 400)
 
     def get(self, request, pk):
-        tasks = Task.objects.get(id=pk)
-        serializer = TaskSerializer(tasks, many=False)
+        tasks = Task.objects.filter(by_list_id=pk)
+        serializer = TaskSerializer(tasks, many=True)
         return Response(serializer.data)
 
     def put(self, request, pk):
