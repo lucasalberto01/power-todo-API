@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
+import sys
 import secrets
 from pathlib import Path
 import dj_database_url
@@ -196,3 +197,21 @@ REST_FRAMEWORK = {
 CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOWED_ORIGINS = []
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "level": "INFO",
+            "class": "logging.StreamHandler",
+            "stream": sys.stdout
+
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+        }
+    }
+}
