@@ -6,6 +6,11 @@ from .serializers import TaskSerializer
 from .models import Task
 
 
+@api_view(['GET'])
+def apiOverview(request):
+    return Response({"runnig": "true"})
+
+
 class TaskTodoById(APIView):
     """Routes for the API with id"""
     permission_classes = [IsAuthenticated]
