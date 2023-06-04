@@ -113,7 +113,7 @@ if IS_HEROKU_APP:
     # https://github.com/jazzband/dj-database-url
     DATABASES = {
         "default": dj_database_url.config(
-            default=os.environ.get("CLEARDB_DATABASE_URL"),
+            default=os.environ.get("JAWSDB_MARIA_URL"),
             conn_max_age=600,
             conn_health_checks=True,
         ),
