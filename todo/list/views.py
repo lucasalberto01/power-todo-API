@@ -37,3 +37,36 @@ class ListTodo(APIView):
         if serializer.is_valid():
             serializer.save(user_id=request.user)
         return Response(serializer.data)
+
+
+class ListTodoManager(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ListSerializer
+
+    def delete(self, request, pk):
+        user_id = request.user.id
+        is_permitted = List.objects.filter(id=pk, user_id=user_id).exists()
+
+        if not is_permitted:
+            return Response({"message": "You are not permitted to delete this task."}, status=403)
+
+        List.objects.filter(id=pk).delete()
+        return Response({"message": "Task with id `{}` has been deleted.".format(id)}, status=204)
+
+    def put(self, request, pk):
+        user_id = request.user.id
+        is_permitted = List.objects.filter(id=pk, user_id=user_id).exists()
+
+        if not is_permitted:
+            return Response({"message": "You are not permitted to update this task."}, status=403)
+
+        task = List.objects.get(id=pk)
+        serializer = ListSerializer(
+            instance=task, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        else:
+            return Response(serializer.errors, status=400)
